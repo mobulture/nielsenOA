@@ -12,4 +12,4 @@ The database is intended to be populated by populating.py, which then will popul
 The GUI was created using tkinter, it allows for some basic querying of aggregate functions using criteria that the user can select. 
 There are selections as to what the target data for your search will be, as well as criteria to group it by
 
-Run gui.py via python gui.py
+Run gui.py via python gui.py on the command line
