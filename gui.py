@@ -57,15 +57,18 @@ class Window(tk.Frame):
         self.selections.place(x=0,y = 150)
 
         #To view our results
-        self.tvMenu = ttk.Treeview(self,columns =("A","B"))
+        self.tvMenu = ttk.Treeview(self)
+        self.tvMenu['columns'] = ("Title","Studio","Genre","Location","Viewers")
         self.tvMenu.heading("#0", text="")
         self.tvMenu.column("#0", minwidth=0, width=0, stretch=tk.NO)
-        self.tvMenu.heading("A", text="A")
-        self.tvMenu.column("A", minwidth=60, width=80, stretch=tk.NO) 
-        self.tvMenu.heading("B", text="B")
-        self.tvMenu.column("B", minwidth=60, width=80)
-        self.tvMenu.pack(side="right")
-
+        for column in self.tvMenu['columns']:
+            self.tvMenu.heading(column,text =column)
+            self.tvMenu.column(column,minwidth = 80,width = 80,stretch = tk.NO)
+        for entry in DBwork.executeQuery("Select * from show"): #We can do this while the database is small, not so good of an idea without a limit if it grows big
+            print(entry)
+            self.tvMenu.insert("",'end', values = entry)
+        self.tvMenu.pack(side="bottom")
+    
 
     def getInput(*args):
         window = args[0]
@@ -116,12 +119,12 @@ def modifyViewList(window,columns,queryResults):
         window.tvMenu.heading(newColumn,text = newColumn)
     for result in queryResults:
         window.tvMenu.insert("",'end',values = result)
-    window.tvMenu.pack(side="right")
+    window.tvMenu.pack(side="bottom")
 
 
 root = tk.Tk()
 app = Window(root)
 
 root.wm_title("Tkinter Window")
-root.geometry("700x280")
+root.geometry("500x600")
 root.mainloop()
