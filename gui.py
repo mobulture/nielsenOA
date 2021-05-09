@@ -65,7 +65,6 @@ class Window(tk.Frame):
             self.tvMenu.heading(column,text =column)
             self.tvMenu.column(column,minwidth = 80,width = 80,stretch = tk.NO)
         for entry in DBwork.executeQuery("Select * from show"): #We can do this while the database is small, not so good of an idea without a limit if it grows big
-            print(entry)
             self.tvMenu.insert("",'end', values = entry)
         self.tvMenu.pack(side="bottom")
     
