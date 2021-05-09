@@ -1,0 +1,10 @@
+create_shows = "CREATE TABLE IF NOT EXISTS Show (title TEXT , studio TEXT, location TEXT, genre TEXT, viewers INTEGER ,PRIMARY KEY(title,studio,location));"
+
+drop_shows = "DROP TABLE Show"
+
+create_genre = "CREATE TABLE IF NOT EXISTS Genre (title TEXT , studio TEXT, genre TEXT,PRIMARY KEY(title,studio,genre))"
+
+
+findShows = "SELECT * from show"
+
+findViewers = "Select title, sum(viewers) as total from show group by title order by total"
