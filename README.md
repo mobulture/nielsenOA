@@ -2,11 +2,10 @@
 
 The assignment is seperated into 3 files. One for database connection and queries, one for database population, and one for the GUI
 
-Python 3.7 was used as the language for all files, with POSTGRESQL as the database hosted locally
-
+Python 3.7 was used as the language for all files, with POSTGRESQL as the database hosted on AWS RDS
 A requirements.txt file is included, the only non python standard library used is psycopg2.
 
-The DBWork files includes credentials for a hypothetical POSTGRESQL user authentication. 
+The DBWork files includes credentials for authentication for a read-only role.
 
 The database is intended to be populated by populating.py, which then will populate the database, allowing for GUI.py to explore the database
 
