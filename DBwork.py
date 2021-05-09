@@ -11,9 +11,6 @@ DBNAME="myDatabase"
 token = 'password'
 
 
-#psql "host=nieloa.c7jvzdz9a72c.us-east-1.rds.amazonaws.com port=5432 dbname=myDatabase user=master password=masterguy"
-
-#slmode=verify-full sslrootcert=certificateFile 
 
 conn = None
 try:
