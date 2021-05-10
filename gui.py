@@ -11,7 +11,7 @@ class Window(tk.Frame):
 
         self.pack(fill = tk.BOTH,expand = 1)
 
-        #Following block is for the selector for criteria to Group our data by, and selector to sort our data
+        #Following block is for the selector menu for criteria to Group our data by, and selector to sort our data
         self.sortSelection = ["Genre","Location","Title", "Studio"]
 
         self.groupLabel = tk.Label(self,text = "Group data by")
@@ -29,7 +29,7 @@ class Window(tk.Frame):
         self.searchLabel.place(x=90,y = 60)
         self.searchOption.trace('w',self.sortMenuCallBack)
 
-        #Block is for the aggregate options for our data
+        #Block is for the aggregate options menu for our data
         self.agglabel = tk.Label(self,text = "Aggregate Func")
         self.agglabel.place(x=0,y=90)
         self.aggOption= tk.StringVar()    
@@ -39,12 +39,10 @@ class Window(tk.Frame):
         self.aggMenu.place(x =90 ,y = 90)
         
 
-        #self.aggOption.trace('w',self.sortMenuCallBack)
-
         #Takes user input for search criteria
         self.entry = tk.Entry(self,width = 100)
         self.entry.place(x=0,y=0)
-        self.entry.insert(tk.END,"Enter show title, location, genre, or studio depending on 2nd option menu option, seperated by commas")
+        self.entry.insert(tk.END,"Enter Title, location, genre, or studio based on 2nd option menu option, seperated by commas, space and case sensitive")
         self.entry.bind("<Button-1>", self.entryListCallBack)
         self.enterButton = tk.Button(self,text = "Enter",command = self.getInput)
         self.enterButton.place(x=0,y = 120)
@@ -53,7 +51,8 @@ class Window(tk.Frame):
         self.selections= tk.Listbox()
         self.selections.insert(tk.END,"This field will show ")
         self.selections.insert(tk.END,"valid search terms for")
-        self.selections.insert(tk.END,"your selection")
+        self.selections.insert(tk.END,"your selection of")
+        self.selections.insert(tk.END,"option 2")
         self.selections.place(x=0,y = 150)
 
         #To view our results
@@ -64,7 +63,8 @@ class Window(tk.Frame):
         for column in self.tvMenu['columns']:
             self.tvMenu.heading(column,text =column)
             self.tvMenu.column(column,minwidth = 80,width = 80,stretch = tk.NO)
-        for entry in DBwork.executeQuery("Select * from show"): #We can do this while the database is small, not so good of an idea without a limit if it grows big
+        #We can do this while the database is small, not so good of an idea without a limit if it grows big
+        for entry in DBwork.executeQuery("Select * from show"):
             self.tvMenu.insert("",'end', values = entry)
         self.tvMenu.pack(side="bottom")
     
@@ -77,20 +77,21 @@ class Window(tk.Frame):
             window.entry.delete(0,'end')
             window.entry.insert(tk.END,"Must select an option from all menus")
             return
+        #Get list of all entries
         entryList = entries.split(',')
         viewerQuery = "SELECT %s,%s(viewers) FROM show" % (window.groupOption.get(), window.aggOption.get())
+        # For every entry in our search term, we will add it to our query 
         if entryList:
             viewerQuery += " WHERE %s IN ( " % (window.searchOption.get())
+            allEntries = []
             for entry in entryList:
-                if entry!= entryList[-1]:
-                    viewerQuery += "'" + entry + "',"
-                else:
-                    viewerQuery += "'" + entry +"')"
+                allEntries.append("'" +entry +"'")
+            viewerQuery += ",".join(allEntries) +")"
         viewerQuery += " group by %s" % (window.groupOption.get()) 
         queryResults = (DBwork.executeQuery(viewerQuery))
-        modifyViewList(window,[window.groupOption.get(),'Viewers'],queryResults)
+        window.modifyViewList([window.groupOption.get(),'Viewers'],queryResults)
 
-    #Call back to clear out entry
+    #Call back to clear out form entry
     def entryListCallBack(self,event):
         self.entry.delete(0,'end')
         return None
@@ -107,23 +108,26 @@ class Window(tk.Frame):
             window.selections.insert(tk.END,result)
         
 
-#When we execute a query, this function will take care of  printing results
-def modifyViewList(window,columns,queryResults):
-    window.tvMenu.delete(*window.tvMenu.get_children())
-    window.tvMenu['columns'] = columns
-    window.tvMenu.column('#0', minwidth=0, stretch=tk.NO)
-    window.tvMenu.heading("#0",text = '', anchor = tk.CENTER)
-    for newColumn in window.tvMenu['columns']:
-        window.tvMenu.column(newColumn,minwidth=60, stretch = tk.NO)
-        window.tvMenu.heading(newColumn,text = newColumn)
-    for result in queryResults:
-        window.tvMenu.insert("",'end',values = result)
-    window.tvMenu.pack(side="bottom")
+    #When we execute a query, this function will take care of  printing results
+    def modifyViewList(self,columns,queryResults):
+        self.tvMenu.delete(*self.tvMenu.get_children())
+        self.tvMenu['columns'] = columns
+        self.tvMenu.column('#0', minwidth=0, stretch=tk.NO)
+        self.tvMenu.heading("#0",text = '', anchor = tk.CENTER)
+        for newColumn in self.tvMenu['columns']:
+            self.tvMenu.column(newColumn,minwidth=60, stretch = tk.NO)
+            self.tvMenu.heading(newColumn,text = newColumn)
+        for result in queryResults:
+            self.tvMenu.insert("",'end',values = result)
+        self.tvMenu.pack(side="bottom")
 
 
-root = tk.Tk()
-app = Window(root)
+if __name__ == "__main__":
 
-root.wm_title("Tkinter Window")
-root.geometry("500x600")
-root.mainloop()
+    root = tk.Tk()
+    app = Window(root)
+
+
+    root.wm_title("Show viewer explorer")
+    root.geometry("500x600")
+    root.mainloop()
